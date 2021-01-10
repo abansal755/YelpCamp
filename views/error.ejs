@@ -1,0 +1,10 @@
+<%- include('partials/start') %>
+<div class="row">
+    <div class="col-md-6 offset-3">
+        <div class="alert alert-danger">
+            <h2 class="h4 alert-heading"><%=err.message%></h2>
+            <p><%=err.stack%></p>
+        </div>
+    </div>
+</div>
+<%- include('partials/end') %>

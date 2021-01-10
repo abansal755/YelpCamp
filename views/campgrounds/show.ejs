@@ -1,0 +1,54 @@
+<%- include('../partials/start') %>
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <img src="<%=campground.image%>" class="card-img-top img-fluid">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <h2 class="h5"><%=campground.title%></h2>
+                    </li>
+                    <li class="list-group-item">
+                        <%=campground.description%>
+                    </li>
+                    <li class="list-group-item">
+                        $<%=campground.price%>/night
+                    </li>
+                    <li class="list-group-item text-muted">
+                        <%=campground.location%>
+                    </li>
+                    <li class="list-group-item">
+                        <form action="/campgrounds/<%= campground._id %>?_method=DELETE" method="POST">
+                            <a href="/campgrounds/<%= campground._id %>/edit" class="btn btn-warning">Edit</a>
+                            <button class="btn btn-danger">Delete</button>
+                        </form>
+                    </li>
+                </ul>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <form class="my-3 needs-validation" action="/campgrounds/<%=campground._id%>/reviews" method="POST" novalidate>
+            <h2>Add a review</h2>
+            <div>
+                <label for="rating" class="form-label">Rating</label>
+                <input type="range" name="review[rating]" id="rating" class="form-range" min="1" max="5">
+            </div>
+            <div>
+                <label for="body" class="form-label">Review</label>
+                <textarea name="review[body]" id="body" class="form-control" placeholder="Review" required></textarea>
+            </div>
+            <button class="btn btn-success mt-2">Submit</button>
+        </form>
+        <% for(let review of campground.reviews){ %>
+            <div class="card mb-2">
+                <div class="card-body">
+                    <h2 class="h5">Rating: <%=review.rating%></h2>
+                    <p>Review: <%=review.body%></p>
+                    <form action="/campgrounds/<%=campground._id%>/reviews/<%=review._id%>?_method=DELETE" method="POST">
+                        <button class="btn btn-danger btn-sm">Delete</button>
+                    </form>
+                </div>
+            </div>
+        <% } %>
+    </div>
+</div>
+<%- include('../partials/end') %>
