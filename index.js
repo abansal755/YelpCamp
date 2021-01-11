@@ -5,9 +5,16 @@ const path = require('path');
 const methodOverride = require('method-override');
 const session = require('express-session');
 const flash = require('connect-flash');
+const passport = require('passport');
+const passportLocal = require('passport-local');
+
 const AppError = require('./utils/AppError');
-const campgrounds = require('./routes/campgrounds');
-const reviews = require('./routes/reviews');
+
+const User = require('./models/user');
+
+const campgroundsRouter = require('./routes/campgrounds');
+const reviewsRouter = require('./routes/reviews');
+const usersRouter = require('./routes/users');
 
 (async function(){
     try{
@@ -38,9 +45,17 @@ app.use(session({
 }));
 app.use(flash());
 
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new passportLocal(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
 app.use((req,res,next) => {
     res.locals.success = req.flash('success');
     res.locals.error = req.flash('error');
+    res.locals.user = req.user;
+    console.log(req.session);
     next();
 });
 
@@ -48,8 +63,9 @@ app.get('/',(req,res) => {
     res.render('home');
 });
 
-app.use('/campgrounds',campgrounds);
-app.use('/campgrounds/:campgroundId/reviews',reviews);
+app.use('/',usersRouter);
+app.use('/campgrounds',campgroundsRouter);
+app.use('/campgrounds/:campgroundId/reviews',reviewsRouter);
 
 app.use((req,res) => {
     throw new AppError('Not found', 404);

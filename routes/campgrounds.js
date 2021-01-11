@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const flash = require('connect-flash');
+const middleware = require('../middleware');
 const AppError = require('../utils/AppError');
 const wrapAsync = require('../utils/wrapAsync');
 const Campground = require('../models/campground');
 const Review = require('../models/review');
-const { resolveInclude } = require('ejs');
 
 /*
 home GET / => home page
@@ -25,13 +25,18 @@ router.get('/',wrapAsync(async (req,res) => {
     res.render('campgrounds/index',{campgrounds});
 }));
 
-router.get('/new',(req,res) => {
+router.get('/new',middleware.ensureLogin,(req,res) => {
     res.render('campgrounds/new');
 });
 
 router.get('/:id',wrapAsync(async (req,res) => {
     const {id} = req.params;
-    const campground = await Campground.findById(id).populate('reviews').exec();
+    const campground = await Campground.findById(id).populate({
+        path: 'reviews',
+        populate: {
+            path: 'author'
+        }
+    }).populate('author').exec();
     if(!campground){
         req.flash('error','Campground not found');
         res.redirect('/campgrounds');
@@ -39,14 +44,15 @@ router.get('/:id',wrapAsync(async (req,res) => {
     else res.render('campgrounds/show',{campground});
 }));
 
-router.post('/',wrapAsync(async (req,res) => {
+router.post('/',middleware.ensureLogin,wrapAsync(async (req,res) => {
     const campground = new Campground(req.body.campground);
+    campground.author = req.user._id;
     await campground.save();
     req.flash('success','Successfully created a campground');
     res.redirect(`/campgrounds/${campground._id}`);
 }));
 
-router.get('/:id/edit',wrapAsync(async (req,res) => {
+router.get('/:id/edit',middleware.ensureLogin,middleware.authorizeCampground,wrapAsync(async (req,res) => {
     const {id} = req.params;
     const campground = await Campground.findById(id).exec();
     if(!campground){
@@ -56,7 +62,7 @@ router.get('/:id/edit',wrapAsync(async (req,res) => {
     else res.render('campgrounds/edit',{campground});
 }));
 
-router.put('/:id',wrapAsync(async (req,res) => {
+router.put('/:id',middleware.ensureLogin,middleware.authorizeCampground,wrapAsync(async (req,res) => {
     const {id} = req.params;
     const {campground} = req.body;
     await Campground.findByIdAndUpdate(id,campground,{runValidators:true}).exec();
@@ -64,7 +70,7 @@ router.put('/:id',wrapAsync(async (req,res) => {
     res.redirect(`/campgrounds/${id}`);
 }));
 
-router.delete('/:id',wrapAsync(async (req,res) => {
+router.delete('/:id',middleware.ensureLogin,middleware.authorizeCampground,wrapAsync(async (req,res) => {
     const {id} = req.params;
     const campground = await Campground.findByIdAndDelete(id).exec();
     if(campground) await Review.deleteMany({_id:{$in:campground.reviews}});

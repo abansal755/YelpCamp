@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const user = require('./user');
 
 const reviewSchema = new mongoose.Schema({
     body: {
@@ -7,6 +8,11 @@ const reviewSchema = new mongoose.Schema({
     },
     rating: {
         type: Number,
+        required: true
+    },
+    author: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: user,
         required: true
     }
 });

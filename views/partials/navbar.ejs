@@ -4,10 +4,22 @@
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-content">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse navbar-nav" id="navbar-content">
-            <a href="/" class="nav-link">Home</a>
-            <a href="/campgrounds" class="nav-link">Campgrounds</a>
-            <a href="/campgrounds/new" class="nav-link">New Campground</a>
+        <div class="collapse navbar-collapse" id="navbar-content">
+            <div class="navbar-nav">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/campgrounds" class="nav-link">Campgrounds</a>
+                <a href="/campgrounds/new" class="nav-link">New Campground</a>
+            </div>
+            <div class="navbar-nav ms-auto">
+                <% if(!user){ %>
+                    <a href="/login" class="btn btn-outline-success me-2">Login</a>
+                    <a href="/register" class="btn btn-outline-warning me-2">Register</a>
+                <% }else{ %>
+                    <form action="/logout" method="POST">
+                        <button class="btn btn-outline-danger">Logout</button>
+                    </form>
+                <% } %>
+            </div>
         </div>
     </div>
 </nav>
