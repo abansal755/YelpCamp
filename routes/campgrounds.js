@@ -29,19 +29,17 @@ router.get('/new',middleware.ensureLogin,(req,res) => {
     res.render('campgrounds/new');
 });
 
-router.get('/:id',wrapAsync(async (req,res) => {
-    const {id} = req.params;
-    const campground = await Campground.findById(id).populate({
+router.get('/:id',middleware.findCampground,wrapAsync(async (req,res) => {
+    req.campgroundQuery.populate({
         path: 'reviews',
         populate: {
             path: 'author'
         }
-    }).populate('author').exec();
-    if(!campground){
-        req.flash('error','Campground not found');
-        res.redirect('/campgrounds');
-    }
-    else res.render('campgrounds/show',{campground});
+    },function(){
+        req.campgroundQuery.populate('author',function(){
+            res.render('campgrounds/show',{campground:req.campgroundQuery});
+        });
+    });
 }));
 
 router.post('/',middleware.ensureLogin,wrapAsync(async (req,res) => {
@@ -52,28 +50,24 @@ router.post('/',middleware.ensureLogin,wrapAsync(async (req,res) => {
     res.redirect(`/campgrounds/${campground._id}`);
 }));
 
-router.get('/:id/edit',middleware.ensureLogin,middleware.authorizeCampground,wrapAsync(async (req,res) => {
-    const {id} = req.params;
-    const campground = await Campground.findById(id).exec();
-    if(!campground){
-        req.flash('error','Campground not found');
-        res.redirect('/campgrounds');
-    }
-    else res.render('campgrounds/edit',{campground});
-}));
+router.get('/:id/edit',middleware.findCampground,middleware.ensureLogin,middleware.authorizeCampground,(req,res) => {
+    res.render('campgrounds/edit',{campground:req.campgroundQuery});
+});
 
-router.put('/:id',middleware.ensureLogin,middleware.authorizeCampground,wrapAsync(async (req,res) => {
+router.put('/:id',middleware.findCampground,middleware.ensureLogin,middleware.authorizeCampground,wrapAsync(async (req,res) => {
     const {id} = req.params;
     const {campground} = req.body;
-    await Campground.findByIdAndUpdate(id,campground,{runValidators:true}).exec();
+    for(const key in campground) req.campgroundQuery[key] = campground[key];
+    await req.campgroundQuery.save();
     req.flash('success','Successfully updated the campground');
     res.redirect(`/campgrounds/${id}`);
 }));
 
-router.delete('/:id',middleware.ensureLogin,middleware.authorizeCampground,wrapAsync(async (req,res) => {
+router.delete('/:id',middleware.findCampground,middleware.ensureLogin,middleware.authorizeCampground,wrapAsync(async (req,res) => {
+    // TODO: Can be made more efficient using less middleware and writing the function instead
     const {id} = req.params;
     const campground = await Campground.findByIdAndDelete(id).exec();
-    if(campground) await Review.deleteMany({_id:{$in:campground.reviews}});
+    await Review.deleteMany({_id:{$in:campground.reviews}});
     req.flash('success','Successfully deleted the campground');
     res.redirect('/campgrounds');
 }));

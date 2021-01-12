@@ -1,6 +1,7 @@
 const Campground = require('./models/campground');
 const Review = require('./models/review');
 const AppError = require('./utils/AppError');
+const wrapAsync = require('./utils/wrapAsync');
 
 exports.ensureLogin = function(req,res,next){
     if(req.isAuthenticated()) next();
@@ -19,26 +20,25 @@ exports.ensureNoLogin = function(req,res,next){
     }
 }
 
-exports.authorizeCampground = async function(req,res,next){
-    try{
-        const {id} = req.params;
-        const campground = await Campground.findById(id).exec();
-        if(!campground) throw new AppError('Not found',404);
-        if(!campground.author.equals(req.user._id)) throw new AppError('Forbidden',403);
-        else next();
-    }catch(err){
-        next(err);
-    }
-}
+exports.authorizeCampground = wrapAsync(async function(req,res,next){
+    if(!req.campgroundQuery.author.equals(req.user._id)) throw new AppError('Forbidden',403);
+    else next();
+})
 
-exports.authorizeReview = async function(req,res,next){
-    try{
-        const {reviewId} = req.params;
-        const review = await Review.findById(reviewId).populate('author').exec();
-        if(!review) throw new AppError('Not found',404);
-        if(review.author.equals(req.user)) next();
-        else throw new AppError('Forbidden',403);
-    }catch(err){
-        next(err);
+exports.findCampground = wrapAsync(async function(req,res,next){
+    const {id} = req.params;
+    const campground = await Campground.findById(id).exec();
+    if(!campground) throw new AppError('Campground not found',404);
+    else{
+        req.campgroundQuery = campground;
+        next();
     }
-}
+})
+
+exports.authorizeReview = wrapAsync(async function(req,res,next) {
+    const {reviewId} = req.params;
+    const review = await Review.findById(reviewId).populate('author').exec();
+    if(!review) throw new AppError('Not found',404);
+    if(review.author.equals(req.user)) next();
+    else throw new AppError('Forbidden',403);
+})

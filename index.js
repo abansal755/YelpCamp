@@ -55,7 +55,6 @@ app.use((req,res,next) => {
     res.locals.success = req.flash('success');
     res.locals.error = req.flash('error');
     res.locals.user = req.user;
-    console.log(req.session);
     next();
 });
 
@@ -65,7 +64,7 @@ app.get('/',(req,res) => {
 
 app.use('/',usersRouter);
 app.use('/campgrounds',campgroundsRouter);
-app.use('/campgrounds/:campgroundId/reviews',reviewsRouter);
+app.use('/campgrounds/:id/reviews',reviewsRouter);
 
 app.use((req,res) => {
     throw new AppError('Not found', 404);

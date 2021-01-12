@@ -6,31 +6,29 @@ const wrapAsync = require('../utils/wrapAsync');
 const Campground = require('../models/campground');
 const Review = require('../models/review');
 
-// /campgrounds/:campgroundId/reviews
+// /campgrounds/:id/reviews
 
-router.post('/',middleware.ensureLogin,wrapAsync(async (req,res) => {
-    const {campgroundId} = req.params;
-    const campground = await Campground.findById(campgroundId).exec();
-    if(!campground){
-        req.flash('error','Campground not found');
-        res.redirect('/campgrounds');
+router.post('/',middleware.findCampground,middleware.ensureLogin,wrapAsync(async (req,res) => {
+    if(req.body.review.rating == 0){
+        req.flash('error','Rating must be atleast 1 star');
+        res.redirect(`/campgrounds/${req.params.id}`);
         return;
     }
     const review = new Review(req.body.review);
     review.author = req.user._id;
     await review.save();
-    campground.reviews.push(review);
-    await campground.save();
-    req.flash('success','Successfully added a review');
-    res.redirect(`/campgrounds/${campgroundId}`);
+    req.campgroundQuery.reviews.push(review);
+    await req.campgroundQuery.save();
+    req.flash('success','Successfully added the review');
+    res.redirect(`/campgrounds/${req.params.id}`);
 }));
 
-router.delete('/:reviewId',middleware.ensureLogin,middleware.authorizeReview,wrapAsync(async (req,res) => {
-    const {campgroundId,reviewId} = req.params;
-    await Campground.findByIdAndUpdate(campgroundId,{$pull:{reviews:reviewId}});
+router.delete('/:reviewId',middleware.findCampground,middleware.ensureLogin,middleware.authorizeReview,wrapAsync(async (req,res) => {
+    const {id,reviewId} = req.params;
+    await req.campgroundQuery.update({$pull:{reviews:reviewId}});
     await Review.findByIdAndDelete(reviewId);
     req.flash('success','Successfully deleted the review');
-    res.redirect(`/campgrounds/${campgroundId}`);
+    res.redirect(`/campgrounds/${id}`);
 }));
 
 module.exports = router;
