@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const flash = require('connect-flash');
+const multer = require('multer');
+const fs = require('fs/promises');
+const upload = multer({dest: 'public/images'});
 const middleware = require('../middleware');
 const AppError = require('../utils/AppError');
 const wrapAsync = require('../utils/wrapAsync');
@@ -42,22 +45,27 @@ router.get('/:id',middleware.findCampground,wrapAsync(async (req,res) => {
     });
 }));
 
-router.post('/',middleware.ensureLogin,wrapAsync(async (req,res) => {
+router.post('/',middleware.ensureLogin,upload.single('image'),wrapAsync(async (req,res) => {
     const campground = new Campground(req.body.campground);
     campground.author = req.user._id;
+    campground.image = `/images/${req.file.filename}`;
     await campground.save();
     req.flash('success','Successfully created a campground');
     res.redirect(`/campgrounds/${campground._id}`);
-}));
+}))
 
 router.get('/:id/edit',middleware.findCampground,middleware.ensureLogin,middleware.authorizeCampground,(req,res) => {
     res.render('campgrounds/edit',{campground:req.campgroundQuery});
 });
 
-router.put('/:id',middleware.findCampground,middleware.ensureLogin,middleware.authorizeCampground,wrapAsync(async (req,res) => {
+router.patch('/:id',middleware.findCampground,middleware.ensureLogin,middleware.authorizeCampground,upload.single('image'),wrapAsync(async (req,res) => {
     const {id} = req.params;
     const {campground} = req.body;
     for(const key in campground) req.campgroundQuery[key] = campground[key];
+    if(req.file){
+        await fs.unlink(`public${req.campgroundQuery.image}`);
+        req.campgroundQuery.image = `/images/${req.file.filename}`;
+    }
     await req.campgroundQuery.save();
     req.flash('success','Successfully updated the campground');
     res.redirect(`/campgrounds/${id}`);
@@ -68,6 +76,7 @@ router.delete('/:id',middleware.findCampground,middleware.ensureLogin,middleware
     const {id} = req.params;
     const campground = await Campground.findByIdAndDelete(id).exec();
     await Review.deleteMany({_id:{$in:campground.reviews}});
+    await fs.unlink(`public${req.campgroundQuery.image}`);
     req.flash('success','Successfully deleted the campground');
     res.redirect('/campgrounds');
 }));

@@ -2,7 +2,7 @@
 <h1 class="text-center">Edit Campground</h1>
 <div class="row">
     <div class="col-md-6 offset-md-3">
-        <form action="/campgrounds/<%=campground._id%>?_method=PUT" method="POST" novalidate class="needs-validation">
+        <form action="/campgrounds/<%=campground._id%>?_method=PATCH" method="POST" novalidate class="needs-validation" enctype="multipart/form-data">
             <div class="mb-2">
                 <label for="title" class="form-label">Title</label>
                 <input type="text" name="campground[title]" id="title" class="form-control" value="<%= campground.title %>" required>
@@ -12,8 +12,8 @@
                 <input type="text" name="campground[location]" id="location" class="form-control" value="<%= campground.location %>" required>
             </div>
             <div class="mb-2">
-                <label for="image" class="form-label">Image Url</label>
-                <input type="text" name="campground[image]" id="image" class="form-control" value="<%= campground.image %>" required>
+                <label for="image" class="form-label">Image</label>
+                <input type="file" name="image" class="form-control" id="image">
             </div>
             <div class="mb-2">
                 <label for="price" class="form-label">Price</label>
