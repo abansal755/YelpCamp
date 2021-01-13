@@ -1,3 +1,5 @@
+if(process.env.NODE_ENV !== 'production') require('dotenv').config();
+
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
@@ -23,7 +25,7 @@ const usersRouter = require('./routes/users');
             useFindAndModify: false,
             useUnifiedTopology: true
         });
-        console.log('Server is running...');
+        console.log('MongoDB is running...');
     }catch(err){
         console.log(err);
         process.exit(1);
@@ -36,7 +38,7 @@ app.use(express.static(path.join(__dirname,'public')));
 app.use(express.urlencoded({extended:true}));
 app.use(methodOverride('_method'));
 app.use(session({
-    secret: 'secretkey',
+    secret: process.env.cookieSecret,
     resave: false,
     saveUninitialized: true,
     cookie: {
@@ -76,4 +78,4 @@ app.use((err,req,res,next) => {
     res.status(status).render('error',{err});
 });
 
-app.listen(3000,() => console.log('MongoDB is running...'));
+app.listen(process.env.PORT,() => console.log(`Server is running on port ${process.env.PORT}...`));

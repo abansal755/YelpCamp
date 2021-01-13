@@ -1,14 +1,29 @@
 const express = require('express');
 const router = express.Router();
 const flash = require('connect-flash');
-const multer = require('multer');
 const fs = require('fs/promises');
-const upload = multer({dest: 'public/images'});
+const path = require('path');
 const middleware = require('../middleware');
 const AppError = require('../utils/AppError');
 const wrapAsync = require('../utils/wrapAsync');
 const Campground = require('../models/campground');
 const Review = require('../models/review');
+
+const multer = require('multer');
+const storage = multer.diskStorage({
+    destination: function(req,file,cb){
+        cb(null,'public/images/uploads');
+    },
+    filename: function(req,file,cb){
+        cb(null,`${req.user._id}${path.extname(file.originalname)}`);
+    }
+});
+const upload = multer({
+    storage,
+    limits: {
+        fileSize: 10*1024*1024
+    }
+});
 
 /*
 home GET / => home page
@@ -48,7 +63,7 @@ router.get('/:id',middleware.findCampground,wrapAsync(async (req,res) => {
 router.post('/',middleware.ensureLogin,upload.single('image'),wrapAsync(async (req,res) => {
     const campground = new Campground(req.body.campground);
     campground.author = req.user._id;
-    campground.image = `/images/${req.file.filename}`;
+    campground.image = `/images/uploads/${req.file.filename}`;
     await campground.save();
     req.flash('success','Successfully created a campground');
     res.redirect(`/campgrounds/${campground._id}`);
