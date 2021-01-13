@@ -13,7 +13,7 @@
             </div>
             <div class="mb-2">
                 <label for="image" class="form-label">Image</label>
-                <input type="file" name="image" class="form-control" id="image">
+                <input type="file" name="image" class="form-control" id="image" multiple>
                 <label class="form-label">Max file size: 10MB</label>
             </div>
             <div class="mb-2">
@@ -32,6 +32,20 @@
             </div>
             <div class="mb-2">
                 <a href="/campgrounds/<%= campground._id %>">Campground</a>
+            </div>
+            <h2 class="h5 mt-3">Choose Images</h2>
+            <div class="row">
+                <% for(let i=0;i<campground.image.length;i++){ %>
+                    <div class="col-6">
+                        <div class="card">
+                            <img src="<%=campground.image[i]%>" class="card-img-top">
+                            <div class="card-body">
+                                <label for="include<%=i%>" class="form-check-label">Include:</label>
+                                <input type="checkbox" name="include[<%=i%>]" checked id="include<%=i%>" class="form-check-input">
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
             </div>
         </form>
     </div>

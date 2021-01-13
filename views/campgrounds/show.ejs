@@ -3,7 +3,28 @@
 <div class="row">
     <div class="col-md-6">
         <div class="card">
-            <img src="<%=campground.image%>" class="card-img-top img-fluid">
+            <div id="slideshow" class="carousel slide" data-bs-ride="carousel">
+                <ol class="carousel-indicators">
+                    <% for(let i=0;i<campground.image.length;i++){ %>
+                        <li data-bs-target="#slideshow" data-bs-slide-to="<%=i%>" <%if(i===0){%>class="active"<%}%>></li>
+                    <% } %>
+                </ol>
+                <div class="carousel-inner">
+                    <% for(let i=0;i<campground.image.length;i++){ %>
+                        <div class="carousel-item <%if(i===0){%>active<%}%>">
+                            <img src="<%=campground.image[i]%>" class="d-block w-100">
+                        </div>
+                    <% } %>
+                </div>
+                <a href="#slideshow" class="carousel-control-prev" role="button" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </a>
+                <a href="#slideshow" class="carousel-control-next" role="button" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </a>
+            </div>
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item">
                         <h2 class="h5"><%=campground.title%></h2>

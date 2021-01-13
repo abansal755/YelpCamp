@@ -11,11 +11,9 @@ const Review = require('../models/review');
 
 const multer = require('multer');
 const storage = multer.diskStorage({
-    destination: function(req,file,cb){
-        cb(null,'public/images/uploads');
-    },
-    filename: function(req,file,cb){
-        cb(null,`${req.user._id}${path.extname(file.originalname)}`);
+    destination: async function(req,file,cb){
+        await fs.mkdir(`public/images/uploads/${req.user._id}`,{recursive: true});
+        cb(null,`public/images/uploads/${req.user._id}`);
     }
 });
 const upload = multer({
@@ -60,10 +58,10 @@ router.get('/:id',middleware.findCampground,wrapAsync(async (req,res) => {
     });
 }));
 
-router.post('/',middleware.ensureLogin,upload.single('image'),wrapAsync(async (req,res) => {
+router.post('/',middleware.ensureLogin,upload.array('image',10),wrapAsync(async (req,res) => {
     const campground = new Campground(req.body.campground);
     campground.author = req.user._id;
-    campground.image = `/images/uploads/${req.file.filename}`;
+    for(const file of req.files) campground.image.push(`/images/uploads/${req.user._id}/${file.filename}`);
     await campground.save();
     req.flash('success','Successfully created a campground');
     res.redirect(`/campgrounds/${campground._id}`);
@@ -73,14 +71,18 @@ router.get('/:id/edit',middleware.findCampground,middleware.ensureLogin,middlewa
     res.render('campgrounds/edit',{campground:req.campgroundQuery});
 });
 
-router.patch('/:id',middleware.findCampground,middleware.ensureLogin,middleware.authorizeCampground,upload.single('image'),wrapAsync(async (req,res) => {
+router.patch('/:id',middleware.findCampground,middleware.ensureLogin,middleware.authorizeCampground,upload.array('image',10),wrapAsync(async (req,res) => {
     const {id} = req.params;
-    const {campground} = req.body;
+    const {campground,include} = req.body;
     for(const key in campground) req.campgroundQuery[key] = campground[key];
-    if(req.file){
-        await fs.unlink(`public${req.campgroundQuery.image}`);
-        req.campgroundQuery.image = `/images/${req.file.filename}`;
+    const size = include?include.length:req.campgroundQuery.image.length;
+    for(let i=size-1;i>=0;i--){
+        if((include && !include[i]) || (!include)){
+            await fs.unlink(`public${req.campgroundQuery.image}`);
+            req.campgroundQuery.image.splice(i,1);
+        }
     }
+    for(const file of req.files) req.campgroundQuery.image.push(`/images/uploads/${req.user._id}/${file.filename}`);
     await req.campgroundQuery.save();
     req.flash('success','Successfully updated the campground');
     res.redirect(`/campgrounds/${id}`);
