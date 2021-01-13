@@ -12,11 +12,6 @@
                 <input type="text" name="campground[location]" id="location" class="form-control" value="<%= campground.location %>" required>
             </div>
             <div class="mb-2">
-                <label for="image" class="form-label">Image</label>
-                <input type="file" name="image" class="form-control" id="image" multiple>
-                <label class="form-label">Max file size: 10MB</label>
-            </div>
-            <div class="mb-2">
                 <label for="price" class="form-label">Price</label>
                 <div class="input-group">
                     <span class="input-group-text">$</span>
@@ -26,6 +21,11 @@
             <div class="mb-2">
                 <label for="description" class="form-label">Description</label>
                 <textarea name="campground[description]" id="description" class="form-control" required><%= campground.description %></textarea>
+            </div>
+            <div class="mb-2">
+                <label for="image" class="form-label">New images</label>
+                <input type="file" name="image" class="form-control" id="image" multiple>
+                <label class="form-label">Max file size: 10MB</label>
             </div>
             <h2 class="h5 mt-3">Choose Images</h2>
             <div class="row">
@@ -41,12 +41,13 @@
                     </div>
                 <% } %>
             </div>
-            <div class="my-2">
+            <div class="mt-2">
                 <button class="btn btn-success">Submit</button>
+                <a href="/campgrounds/<%=campground._id%>" class="btn btn-primary">Back</a>
             </div>
-            <div class="mb-2">
+            <!-- <div class="mb-2">
                 <a href="/campgrounds/<%= campground._id %>">Campground</a>
-            </div>
+            </div> -->
         </form>
     </div>
 </div>

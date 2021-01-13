@@ -12,11 +12,6 @@
                 <input type="text" name="campground[location]" id="location" class="form-control" required>
             </div>
             <div class="mb-2">
-                <label for="image" class="form-label">Image</label>
-                <input type="file" name="image" class="form-control" id="image" multiple required>
-                <label class="form-label">Max file size: 10MB</label>
-            </div>
-            <div class="mb-2">
                 <label for="price" class="form-label">Price</label>
                 <div class="input-group">
                     <span class="input-group-text">$</span>
@@ -28,10 +23,13 @@
                 <textarea name="campground[description]" id="description" class="form-control" required></textarea>
             </div>
             <div class="mb-2">
-                <button class="btn btn-success">Submit</button>
+                <label for="image" class="form-label">Images</label>
+                <input type="file" name="image" class="form-control" id="image" multiple required>
+                <label class="form-label">Max file size: 10MB</label>
             </div>
-            <div class="mb-2">
-                <a href="/campgrounds">All Campgrounds</a>
+            <div>
+                <button class="btn btn-success">Submit</button>
+                <a href="/campgrounds" class="btn btn-primary">Back</a>
             </div>
         </form>
     </div>
