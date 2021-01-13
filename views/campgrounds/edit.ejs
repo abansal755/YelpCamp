@@ -27,12 +27,6 @@
                 <label for="description" class="form-label">Description</label>
                 <textarea name="campground[description]" id="description" class="form-control" required><%= campground.description %></textarea>
             </div>
-            <div class="mb-2">
-                <button class="btn btn-success">Submit</button>
-            </div>
-            <div class="mb-2">
-                <a href="/campgrounds/<%= campground._id %>">Campground</a>
-            </div>
             <h2 class="h5 mt-3">Choose Images</h2>
             <div class="row">
                 <% for(let i=0;i<campground.image.length;i++){ %>
@@ -46,6 +40,12 @@
                         </div>
                     </div>
                 <% } %>
+            </div>
+            <div class="my-2">
+                <button class="btn btn-success">Submit</button>
+            </div>
+            <div class="mb-2">
+                <a href="/campgrounds/<%= campground._id %>">Campground</a>
             </div>
         </form>
     </div>
