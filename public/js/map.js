@@ -1,7 +1,7 @@
 mapboxgl.accessToken = mbxToken;
 const map = new mapboxgl.Map({
     container: 'map',
-    style: 'mapbox://styles/mapbox/streets-v11',
+    style: 'mapbox://styles/mapbox/dark-v10',
     center: coordinates,
     zoom: 10
 });
