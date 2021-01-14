@@ -26,7 +26,6 @@ const upload = multer({
 
 //Mapbox
 const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding');
-const { nextTick } = require('process');
 const geocoder = mbxGeocoding({accessToken: process.env.mbxToken});
 
 /*
@@ -52,6 +51,7 @@ router.get('/new',middleware.ensureLogin,(req,res) => {
 });
 
 router.get('/:id',middleware.findCampground,wrapAsync(async (req,res) => {
+    console.log(req.campgroundQuery);
     req.campgroundQuery.populate({
         path: 'reviews',
         populate: {
@@ -77,6 +77,7 @@ router.post('/',middleware.ensureLogin,upload.array('image',10),wrapAsync(async 
             query: campground.location,
             limit: 1
         }).send();
+        if(geo.body.features.length === 0) throw new AppError('Location not found. Please enter a valid location',400);
         campground.geometry = geo.body.features[0].geometry
     
         await campground.save();
@@ -87,7 +88,7 @@ router.post('/',middleware.ensureLogin,upload.array('image',10),wrapAsync(async 
         for(const file of campground.image) await fs.unlink(`public/${file}`);
         throw err;
     }
-}))
+}));
 
 router.get('/:id/edit',middleware.findCampground,middleware.ensureLogin,middleware.authorizeCampground,(req,res) => {
     res.render('campgrounds/edit',{campground:req.campgroundQuery});
