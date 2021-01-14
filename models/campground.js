@@ -41,6 +41,13 @@ const campgroundScheme = new mongoose.Schema({
         ref: 'User',
         required: true
     }
-});
+},{toJSON: {virtuals:true}});
+
+campgroundScheme.virtual('properties.popupHtml').get(function(){
+    return `
+            <a href="/campgrounds/${this._id}">${this.title}</a>
+            <br>
+            ${this.location}`;
+})
 
 module.exports = mongoose.model('Campground',campgroundScheme);

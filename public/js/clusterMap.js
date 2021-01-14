@@ -5,6 +5,8 @@ const map = new mapboxgl.Map({
     zoom: 1.5
 });
 
+console.log(campgrounds);
+
 map.on('load', function () {
     // Add a new source from our GeoJSON data and
     // set the 'cluster' option to true. GL-JS will
@@ -101,15 +103,7 @@ map.on('load', function () {
     // description HTML from its properties.
     map.on('click', 'unclustered-point', function (e) {
         const coordinates = e.features[0].geometry.coordinates.slice();
-        const mag = e.features[0].properties.mag;
-        let tsunami;
-
-        if (e.features[0].properties.tsunami === 1) {
-            tsunami = 'yes';
-        } else {
-            tsunami = 'no';
-        }
-
+        const text = e.features[0].properties.popupHtml;
         // Ensure that if the map is zoomed out such that
         // multiple copies of the feature are visible, the
         // popup appears over the copy being pointed to.
@@ -119,9 +113,7 @@ map.on('load', function () {
 
         new mapboxgl.Popup()
             .setLngLat(coordinates)
-            .setHTML(
-                'magnitude: ' + mag + '<br>Was there a tsunami?: ' + tsunami
-            )
+            .setHTML(text)
             .addTo(map);
     });
 
