@@ -51,7 +51,6 @@ router.get('/new',middleware.ensureLogin,(req,res) => {
 });
 
 router.get('/:id',middleware.findCampground,wrapAsync(async (req,res) => {
-    console.log(req.campgroundQuery);
     req.campgroundQuery.populate({
         path: 'reviews',
         populate: {

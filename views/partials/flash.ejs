@@ -1,13 +1,15 @@
-<% for(let msg of success){ %>
-    <div class="alert alert-success alert-dismissible fade show">
-        <%=msg%>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-<% } %>
-
-<% for(let msg of error){ %>
-    <div class="alert alert-danger alert-dismissible fade show">
-        <%=msg%>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-<% } %>
+<div class="position-fixed" style="top: 65px; right: 8px;">
+    <% for(let msg of success){ %>
+        <div class="alert alert-success alert-dismissible fade show">
+            <%=msg%>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+    
+    <% for(let msg of error){ %>
+        <div class="alert alert-danger alert-dismissible fade show">
+            <%=msg%>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+</div>
