@@ -1,8 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
+const fs = require('fs/promises');
 const middleware = require('../middleware');
 const User = require('../models/user');
+const Campground = require('../models/campground');
+const Review = require('../models/review');
 const AppError = require('../utils/AppError');
 const wrapAsync = require('../utils/wrapAsync');
 
@@ -62,6 +65,35 @@ router.post('/settings/change-password',middleware.ensureLogin,wrapAsync(async (
     }
     req.flash('success','Successfully changed the password');
     res.redirect('/settings');
+}));
+
+router.get('/settings/delete',middleware.ensureLogin,(req,res) => {
+    res.render('users/delete');
+});
+
+router.post('/settings/delete',middleware.ensureLogin,wrapAsync(async (req,res) => {
+    //deleting the user
+    const user = await req.user.deleteOne();
+
+    //deleting all the campgrounds of the user
+    const campgrounds = await Campground.find({author: user._id}).exec();
+    for(const campground of campgrounds){
+        await campground.deleteOne();
+
+        //deleting all the reviews of a specific campground
+        await Review.deleteMany({_id:{$in:campground.reviews}});
+
+        //deleting all the images of the campground from the disk
+        for(const file of campground.image) await fs.unlink(`public/${file}`);
+    };
+
+    //deleting all the reviews by the user
+    const reviews = await Review.find({author: user._id}).populate('campground','reviews').exec();
+    for(const review of reviews){
+        await review.deleteOne();
+        await review.campground.update({$pull:{reviews: review._id}});
+    }
+    res.redirect('/');
 }));
 
 module.exports = router;
