@@ -93,7 +93,7 @@ router.get('/:id/edit',middleware.findCampground,middleware.ensureLogin,middlewa
     res.render('campgrounds/edit',{campground:req.campgroundQuery});
 });
 
-router.get('/:id/delete',middleware.findCampground,middleware.ensureLogin,middleware.findCampground,(req,res) => {
+router.get('/:id/delete',middleware.findCampground,middleware.ensureLogin,middleware.authorizeCampground,(req,res) => {
     res.render('campgrounds/delete',{campground:req.campgroundQuery});
 });
 
