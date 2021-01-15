@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Review = require('./review');
 
 const campgroundScheme = new mongoose.Schema({
     title: {
@@ -48,6 +49,10 @@ campgroundScheme.virtual('properties.popupHtml').get(function(){
             <a href="/campgrounds/${this._id}">${this.title}</a>
             <br>
             ${this.location}`;
-})
+});
+
+campgroundScheme.post('deleteOne',async function(campground){
+    await Review.deleteMany({_id:{$in:campground.reviews}});
+});
 
 module.exports = mongoose.model('Campground',campgroundScheme);
