@@ -7,3 +7,4 @@ const map = new mapboxgl.Map({
 });
 
 const marker = new mapboxgl.Marker().setLngLat(coordinates).addTo(map);
+map.addControl(new mapboxgl.NavigationControl());

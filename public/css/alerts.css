@@ -2,7 +2,7 @@
     position: fixed;
     top: 65px;
     right: 8px;
-    z-index: 1;
+    z-index: 3;
 }
 @media(min-width: 576px) and (max-width: 767px){
     #flash-container{
