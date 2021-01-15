@@ -25,6 +25,9 @@
 <script>
     const mbxToken = '<%=process.env.mbxToken%>';
     const campgrounds = {features: <%- JSON.stringify(campgrounds) %>};
+    
+    const navCampgrounds = document.querySelector('#nav-campgrounds');
+    navCampgrounds.classList.add('active');
 </script>
 <script src="/js/clusterMap.js"></script>
 <%- include('../partials/end') %>

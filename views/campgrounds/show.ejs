@@ -99,7 +99,7 @@
 </div>
 <script>
     const mbxToken = '<%=process.env.mbxToken%>';
-    const coordinates = ['<%=campground.geometry.coordinates[0]%>','<%=campground.geometry.coordinates[1]%>']
+    const coordinates = [<%=campground.geometry.coordinates[0]%>,<%=campground.geometry.coordinates[1]%>]
 </script>
 <script src="/js/map.js"></script>
 <%- include('../partials/end-container') %>
