@@ -51,8 +51,4 @@ campgroundScheme.virtual('properties.popupHtml').get(function(){
             ${this.location}`;
 });
 
-campgroundScheme.post('deleteOne',async function(campground){
-    await Review.deleteMany({_id:{$in:campground.reviews}});
-});
-
 module.exports = mongoose.model('Campground',campgroundScheme);

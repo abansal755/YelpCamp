@@ -126,6 +126,7 @@ router.patch('/:id',middleware.findCampground,middleware.ensureLogin,middleware.
 router.delete('/:id',middleware.findCampground,middleware.ensureLogin,middleware.authorizeCampground,wrapAsync(async (req,res) => {
     const {id} = req.params;
     const campground = await req.campgroundQuery.deleteOne();
+    await Review.deleteMany({_id:{$in:campground.reviews}});
     for(const file of campground.image) await fs.unlink(`public/${file}`);
     req.flash('success','Successfully deleted the campground');
     res.redirect('/campgrounds');
