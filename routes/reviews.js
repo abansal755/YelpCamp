@@ -16,6 +16,7 @@ router.post('/',middleware.findCampground,middleware.ensureLogin,wrapAsync(async
     }
     const review = new Review(req.body.review);
     review.author = req.user._id;
+    review.campground = req.campgroundQuery;
     await review.save();
     req.campgroundQuery.reviews.push(review);
     await req.campgroundQuery.save();
