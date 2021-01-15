@@ -51,4 +51,6 @@ campgroundScheme.virtual('properties.popupHtml').get(function(){
             ${this.location}`;
 });
 
+//TODO: add middleware for deleting images from disk after deleting campground
+
 module.exports = mongoose.model('Campground',campgroundScheme);
