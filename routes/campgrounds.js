@@ -93,6 +93,10 @@ router.get('/:id/edit',middleware.findCampground,middleware.ensureLogin,middlewa
     res.render('campgrounds/edit',{campground:req.campgroundQuery});
 });
 
+router.get('/:id/delete',middleware.findCampground,middleware.ensureLogin,middleware.findCampground,(req,res) => {
+    res.render('campgrounds/delete',{campground:req.campgroundQuery});
+});
+
 router.patch('/:id',middleware.findCampground,middleware.ensureLogin,middleware.authorizeCampground,upload.array('image',10),wrapAsync(async (req,res) => {
     const {id} = req.params;
     const {campground,include} = req.body;

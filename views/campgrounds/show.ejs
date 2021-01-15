@@ -44,10 +44,8 @@
                     </li>
                     <% if(campground.author.equals(user)){ %>
                         <li class="list-group-item">
-                            <form action="/campgrounds/<%= campground._id %>?_method=DELETE" method="POST">
-                                <a href="/campgrounds/<%= campground._id %>/edit" class="btn btn-warning">Edit</a>
-                                <button class="btn btn-danger">Delete</button>
-                            </form>
+                            <a href="/campgrounds/<%= campground._id %>/edit" class="btn btn-warning">Edit</a>
+                            <a href="/campgrounds/<%= campground._id %>/delete" class="btn btn-danger">Delete</a>
                         </li>
                     <% } %>
                 </ul>
