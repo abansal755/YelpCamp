@@ -12,12 +12,20 @@
             </div>
             <div class="navbar-nav ms-auto align-items-center">
                 <% if(!user){ %>
-                    <a href="/login" class="btn btn-outline-success me-2 mb-2 mb-md-0">Login</a>
-                    <a href="/register" class="btn btn-outline-warning me-2">Register</a>
+                    <a href="/login" class="btn btn-outline-light me-2 mb-2 mb-md-0">Login</a>
+                    <a href="/register" class="btn btn-outline-light me-2">Register</a>
                 <% }else{ %>
-                    <form action="/logout" method="POST">
-                        <button class="btn btn-outline-danger">Logout</button>
-                    </form>
+                    <div class="dropdown">
+                        <button class="btn btn-outline-light dropdown-toggle" id="account-dropdown" data-bs-toggle="dropdown">Account</button>
+                        <ul class="dropdown-menu">
+                            <li><a href="/settings" class="dropdown-item">Settings</a></li>
+                            <li>
+                                <form action="/logout" method="POST">
+                                    <button class="dropdown-item">Logout</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
                 <% } %>
             </div>
         </div>

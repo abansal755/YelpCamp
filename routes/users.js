@@ -3,6 +3,7 @@ const router = express.Router();
 const passport = require('passport');
 const middleware = require('../middleware');
 const User = require('../models/user');
+const AppError = require('../utils/AppError');
 const wrapAsync = require('../utils/wrapAsync');
 
 router.get('/register',middleware.ensureNoLogin,(req,res) => {
@@ -41,5 +42,26 @@ router.post('/logout',middleware.ensureLogin,(req,res) => {
     req.flash('success','Successfully loggout out');
     res.redirect('/campgrounds');
 });
+
+router.get('/settings',middleware.ensureLogin,(req,res) => {
+    res.render('users/settings');
+});
+
+router.get('/settings/change-password',middleware.ensureLogin,(req,res) => {
+    res.render('users/change-password');
+});
+
+router.post('/settings/change-password',middleware.ensureLogin,wrapAsync(async (req,res) => {
+    const {current:oldPassword,'new':newPassword} = req.body;
+    try{
+        await req.user.changePassword(oldPassword,newPassword);
+    }catch{
+        req.flash('error','Incorrect current password');
+        res.redirect('/settings/change-password');
+        return;
+    }
+    req.flash('success','Successfully changed the password');
+    res.redirect('/settings');
+}));
 
 module.exports = router;

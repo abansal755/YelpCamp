@@ -1,0 +1,20 @@
+<%- include('../partials/start-container') %>
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <h1>Settings</h1>
+            <div class="list-group mt-4">
+                <div class="list-group-item">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" id="username" class="form-control" disabled value="<%=user.username%>">
+                </div>
+                <div class="list-group-item">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="text" id="email" class="form-control" disabled value="<%=user.email%>">
+                </div>
+                <div class="list-group-item">
+                    <a href="/settings/change-password" class="btn btn-danger">Change password</a>
+                </div>
+            </div>
+        </div>
+    </div>
+<%- include('../partials/end-container') %>
