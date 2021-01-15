@@ -16,6 +16,6 @@
         position: static;
         padding-right: var(--bs-gutter-x,.75rem);
         padding-left: var(--bs-gutter-x,.75rem);
-        padding-top: 15px;
+        /* padding-top: 15px; */
     }
 }
