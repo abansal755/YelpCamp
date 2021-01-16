@@ -20,9 +20,19 @@ const campgroundsRouter = require('./routes/campgrounds');
 const reviewsRouter = require('./routes/reviews');
 const usersRouter = require('./routes/users');
 
+/*
+System variables to be added
+DB_URL
+PORT
+secret
+mbxToken
+*/
+
+const dbUrl = process.env.DB_URL || 'mongodb://localhost/YelpCamp';
+
 (async function(){
     try{
-        await mongoose.connect('mongodb://localhost/YelpCamp',{
+        await mongoose.connect(dbUrl,{
             useNewUrlParser: true,
             useFindAndModify: false,
             useUnifiedTopology: true
@@ -41,7 +51,7 @@ app.use(express.urlencoded({extended:true}));
 app.use(methodOverride('_method'));
 
 const store = new mongoStore({
-    url: 'mongodb://localhost/YelpCamp',
+    url: dbUrl,
     secret: process.env.secret,
     touchAfter: 24*60*60
 });
@@ -103,4 +113,5 @@ app.use((err,req,res,next) => {
     res.status(status).render('error',{err});
 });
 
+const port = process.env.PORT || 3000;
 app.listen(process.env.PORT,() => console.log(`Server is running on port ${process.env.PORT}...`));
