@@ -9,5 +9,5 @@ const userSchema = new mongoose.Schema({
     }
 });
 userSchema.plugin(passportLocalMongoose);
-
+//TODO: add email validation
 module.exports = mongoose.model('User',userSchema);

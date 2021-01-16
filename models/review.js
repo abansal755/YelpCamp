@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const escape = require('escape-html');
 const user = require('./user');
 
 const reviewSchema = new mongoose.Schema({
@@ -21,6 +22,11 @@ const reviewSchema = new mongoose.Schema({
         ref: 'Campground',
         required: true
     }
+});
+
+reviewSchema.pre('save',function(next){
+    this.body = escape(this.body);
+    next();
 });
 
 module.exports = mongoose.model('Review',reviewSchema);

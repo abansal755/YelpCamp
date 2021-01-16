@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Review = require('./review');
+const escape = require('escape-html');
 
 const campgroundScheme = new mongoose.Schema({
     title: {
@@ -49,6 +50,13 @@ campgroundScheme.virtual('properties.popupHtml').get(function(){
             <a href="/campgrounds/${this._id}">${this.title}</a>
             <br>
             ${this.location}`;
+});
+
+campgroundScheme.pre('save', function(next){
+    this.title = escape(this.title);
+    this.description = escape(this.description);
+    this.location = escape(this.location);
+    next();
 });
 
 //TODO: add middleware for deleting images from disk after deleting campground
