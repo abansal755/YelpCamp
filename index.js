@@ -9,6 +9,7 @@ const session = require('express-session');
 const flash = require('connect-flash');
 const passport = require('passport');
 const passportLocal = require('passport-local');
+const helmet = require('helmet');
 
 const AppError = require('./utils/AppError');
 
@@ -38,14 +39,31 @@ app.use(express.static(path.join(__dirname,'public')));
 app.use(express.urlencoded({extended:true}));
 app.use(methodOverride('_method'));
 app.use(session({
+    name: 'session',
     secret: process.env.cookieSecret,
     resave: false,
     saveUninitialized: true,
     cookie: {
+        httpOnly: true,
         maxAge: 1000*60*60*24*7
     }
 }));
+
+const src = ["'self'","'unsafe-inline'","https://cdn.jsdelivr.net/","https://api.mapbox.com/","https://events.mapbox.com/"]
+
 app.use(flash());
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+            'connect-src': src,
+            'style-src': src,
+            'script-src': src,
+            'worker-src':["'self'","blob:"],
+            'img-src': ["'self'","blob:","data:"]
+        }
+    }
+}));
 
 app.use(passport.initialize());
 app.use(passport.session());

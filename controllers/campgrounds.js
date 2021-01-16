@@ -42,7 +42,7 @@ exports.create = wrapAsync(async (req,res) => {
             limit: 1
         }).send();
         if(geo.body.features.length === 0) throw new AppError('Location not found. Please enter a valid location',400);
-        campground.geometry = geo.body.features[0].geometry
+        campground.geometry = geo.body.features[0].geometry;
     
         await campground.save();
         req.flash('success','Successfully created a campground');
@@ -73,6 +73,14 @@ exports.update = wrapAsync(async (req,res) => {
 
     //updating text fields in campground
     for(const key in campground) req.campgroundQuery[key] = campground[key];
+
+    //Adding geometry to campground
+    const geo = await geocoder.forwardGeocode({
+        query: req.campgroundQuery.location,
+        limit: 1
+    }).send();
+    if(geo.body.features.length === 0) throw new AppError('Location not found. Please enter a valid location',400);
+    req.campgroundQuery.geometry = geo.body.features[0].geometry;
 
     //adding image urls uploaded earlier which are not checked to removeArray[]
     for(let i=req.campgroundQuery.image.length-1;i>=0;i--){
