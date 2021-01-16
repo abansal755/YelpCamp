@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const path = require('path');
 const methodOverride = require('method-override');
 const session = require('express-session');
+const mongoStore = require('connect-mongo')(session);
 const flash = require('connect-flash');
 const passport = require('passport');
 const passportLocal = require('passport-local');
@@ -38,29 +39,35 @@ app.set('view engine','ejs');
 app.use(express.static(path.join(__dirname,'public')));
 app.use(express.urlencoded({extended:true}));
 app.use(methodOverride('_method'));
+
+const store = new mongoStore({
+    url: 'mongodb://localhost/YelpCamp',
+    secret: process.env.secret,
+    touchAfter: 24*60*60
+});
+
 app.use(session({
     name: 'session',
-    secret: process.env.cookieSecret,
+    secret: process.env.secret,
     resave: false,
     saveUninitialized: true,
+    store,
     cookie: {
         httpOnly: true,
         maxAge: 1000*60*60*24*7
     }
 }));
 
-const src = ["'self'","'unsafe-inline'","https://cdn.jsdelivr.net/","https://api.mapbox.com/","https://events.mapbox.com/"]
-
 app.use(flash());
 app.use(helmet({
     contentSecurityPolicy: {
         directives: {
             ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-            'connect-src': src,
-            'style-src': src,
-            'script-src': src,
+            'connect-src': ["'self'","'unsafe-inline'","https://api.mapbox.com/","https://events.mapbox.com/"],
+            'style-src': ["'self'","'unsafe-inline'","https://cdn.jsdelivr.net/","https://api.mapbox.com/","https://events.mapbox.com/"],
+            'script-src': ["'self'","'unsafe-inline'","https://cdn.jsdelivr.net/","https://api.mapbox.com/","https://events.mapbox.com/"],
             'worker-src':["'self'","blob:"],
-            'img-src': ["'self'","blob:","data:"]
+            'img-src': ["'self'","blob:","data:","https://images.unsplash.com"]
         }
     }
 }));
