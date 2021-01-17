@@ -47,7 +47,7 @@ exports.create = wrapAsync(async (req,res) => {
         req.flash('success','Successfully created a campground');
         res.redirect(`/campgrounds/${campground._id}`);
     }catch(err){
-        //TODO: delete images from server in case anything goes wrong in try
+        // delete images from server in case anything goes wrong in try
         for(const file of req.files) await cloudinary.uploader.destroy(file.filename);
         throw err;
     }
