@@ -3,6 +3,7 @@ const Campground = require('../models/campground');
 const Review = require('../models/review');
 const AppError = require('../utils/AppError');
 const wrapAsync = require('../utils/wrapAsync');
+const {cloudinary} = require('../config/multer');
 
 const geocoder = require('../config/mapbox');
 
@@ -29,14 +30,12 @@ exports.show = wrapAsync(async (req,res) => {
 })
 
 exports.create = wrapAsync(async (req,res) => {
-    //Adding text fields to campground
     const campground = new Campground(req.body.campground);
     campground.author = req.user._id;
-    for(const file of req.files) campground.image.push(`/images/uploads/${req.user._id}/${file.filename}`); 
     if(req.files.length === 0) throw new AppError('Atleast 1 image is required',400);
+    for(const file of req.files) campground.image.push({path:file.path, filename:file.filename});
 
     try{
-        //Adding geometry to campground
         const geo = await geocoder.forwardGeocode({
             query: campground.location,
             limit: 1
@@ -48,8 +47,8 @@ exports.create = wrapAsync(async (req,res) => {
         req.flash('success','Successfully created a campground');
         res.redirect(`/campgrounds/${campground._id}`);
     }catch(err){
-        //If there is any error in fetching geometry or saving the campground, remove all its uploaded files as it is not being saved
-        for(const file of campground.image) await fs.unlink(`public/${file}`);
+        //TODO: delete images from server in case anything goes wrong in try
+        for(const file of req.files) await cloudinary.uploader.destroy(file.filename);
         throw err;
     }
 })
@@ -69,7 +68,7 @@ exports.update = wrapAsync(async (req,res) => {
 
     //Checking no. of images
     if(!include && req.files.length === 0) throw new AppError('Atleast 1 image is required',400);
-    if(req.files.length+include.length > 10) throw new AppError('Atmax 10 images are allowed',400);
+    if(req.files.length+(include?include.length:0) > 10) throw new AppError('Atmax 10 images are allowed',400);
 
     //updating text fields in campground
     for(const key in campground) req.campgroundQuery[key] = campground[key];
@@ -85,17 +84,17 @@ exports.update = wrapAsync(async (req,res) => {
     //adding image urls uploaded earlier which are not checked to removeArray[]
     for(let i=req.campgroundQuery.image.length-1;i>=0;i--){
         if((include && !include[i]) || !include){
-            removeArray.push(`public${req.campgroundQuery.image[i]}`);
+            removeArray.push(req.campgroundQuery.image[i].filename);
             req.campgroundQuery.image.splice(i,1);
         }
     }
 
     //adding newly uploaded images
-    for(const file of req.files) req.campgroundQuery.image.push(`/images/uploads/${req.user._id}/${file.filename}`);
+    for(const file of req.files) req.campgroundQuery.image.push({path:file.path,filename:file.filename});
     await req.campgroundQuery.save();
 
     //removing the images from removeArray[]
-    for(const url of removeArray) await fs.unlink(url);
+    for(const url of removeArray) await cloudinary.uploader.destroy(url);
     req.flash('success','Successfully updated the campground');
     res.redirect(`/campgrounds/${id}`);
 })
@@ -104,7 +103,7 @@ exports.destroy = wrapAsync(async (req,res) => {
     const {id} = req.params;
     const campground = await req.campgroundQuery.deleteOne();
     await Review.deleteMany({_id:{$in:campground.reviews}});
-    for(const file of campground.image) await fs.unlink(`public/${file}`);
+    for(const file of campground.image) await cloudinary.uploader.destroy(file.filename);
     req.flash('success','Successfully deleted the campground');
     res.redirect('/campgrounds');
 })

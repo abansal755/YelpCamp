@@ -24,8 +24,11 @@ const usersRouter = require('./routes/users');
 System variables to be added
 DB_URL
 PORT
-secret
-mbxToken
+!secret
+!mbxToken
+!CLOUDINARY_CLOUD_NAME
+!CLOUDINARY_KEY
+!CLOUDINARY_SECRET
 */
 
 const dbUrl = process.env.DB_URL || 'mongodb://localhost/YelpCamp';
@@ -77,7 +80,7 @@ app.use(helmet({
             'style-src': ["'self'","'unsafe-inline'","https://cdn.jsdelivr.net/","https://api.mapbox.com/","https://events.mapbox.com/"],
             'script-src': ["'self'","'unsafe-inline'","https://cdn.jsdelivr.net/","https://api.mapbox.com/","https://events.mapbox.com/"],
             'worker-src':["'self'","blob:"],
-            'img-src': ["'self'","blob:","data:","https://images.unsplash.com"]
+            'img-src': ["'self'","blob:","data:","https://images.unsplash.com","https://res.cloudinary.com"]
         }
     }
 }));

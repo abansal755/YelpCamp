@@ -32,7 +32,7 @@
                 <% for(let i=0;i<campground.image.length;i++){ %>
                     <div class="col-6">
                         <div class="card">
-                            <img src="<%=campground.image[i]%>" class="card-img-top">
+                            <img src="<%=campground.image[i].path%>" class="card-img-top">
                             <div class="card-body">
                                 <label for="include<%=i%>" class="form-check-label">Include:</label>
                                 <input type="checkbox" name="include[<%=i%>]" checked id="include<%=i%>" class="form-check-input">

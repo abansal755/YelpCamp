@@ -13,7 +13,7 @@
                 <div class="carousel-inner">
                     <% for(let i=0;i<campground.image.length;i++){ %>
                         <div class="carousel-item <%if(i===0){%>active<%}%>">
-                            <img src="<%=campground.image[i]%>" class="d-block w-100">
+                            <img src="<%=campground.image[i].path%>" class="d-block w-100">
                         </div>
                     <% } %>
                 </div>

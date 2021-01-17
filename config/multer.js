@@ -1,10 +1,18 @@
 const fs = require('fs/promises');
+const cloudinary = require('cloudinary').v2;
+const {CloudinaryStorage} = require('multer-storage-cloudinary');
+
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_KEY,
+    api_secret: process.env.CLOUDINARY_SECRET
+});
 
 const multer = require('multer');
-const storage = multer.diskStorage({
-    destination: async function(req,file,cb){
-        await fs.mkdir(`public/images/uploads/${req.user._id}`,{recursive: true});
-        cb(null,`public/images/uploads/${req.user._id}`);
+const storage = new CloudinaryStorage({
+    cloudinary,
+    params: {
+        folder: 'YelpCamp'
     }
 });
 const upload = multer({
@@ -14,4 +22,4 @@ const upload = multer({
     }
 });
 
-module.exports = upload;
+module.exports = {upload,cloudinary};

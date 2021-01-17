@@ -3,7 +3,7 @@ const router = express.Router();
 
 const middleware = require('../middleware');
 const campgroundsController = require('../controllers/campgrounds');
-const upload = require('../config/multer');
+const {upload} = require('../config/multer');
 
 /*
 home GET / => home page

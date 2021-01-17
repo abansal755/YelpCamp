@@ -32,7 +32,15 @@ const campgroundScheme = new mongoose.Schema({
         required: true
     },
     image: [{
-        type: String
+        _id: false,
+        path: {
+            type: String,
+            required: true
+        },
+        filename: {
+            type: String,
+            required: true
+        }
     }],
     reviews: [{
         type: mongoose.Schema.Types.ObjectId,
