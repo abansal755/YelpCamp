@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const escape = require('escape-html');
-const user = require('./user');
 
 const reviewSchema = new mongoose.Schema({
     body: {

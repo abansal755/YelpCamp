@@ -67,23 +67,6 @@ exports.delete = (req,res) => {
 }
 
 exports.destroy = wrapAsync(async (req,res) => {
-    //deleting the user
-    const user = await req.user.deleteOne();
-
-    //deleting all the campgrounds of the user
-    const campgrounds = await Campground.find({author: user._id}).exec();
-    for(const campground of campgrounds){
-        await campground.deleteOne();
-
-        //deleting all the reviews of a specific campground
-        await Review.deleteMany({_id:{$in:campground.reviews}});
-    };
-
-    //deleting all the reviews by the user
-    const reviews = await Review.find({author: user._id}).populate('campground','reviews').exec();
-    for(const review of reviews){
-        await review.deleteOne();
-        await review.campground.update({$pull:{reviews: review._id}});
-    }
+    await req.user.deleteOne();
     res.redirect('/');
 })

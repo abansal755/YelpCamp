@@ -100,7 +100,6 @@ exports.update = wrapAsync(async (req,res) => {
 
 exports.destroy = wrapAsync(async (req,res) => {
     const campground = await req.campgroundQuery.deleteOne();
-    await Review.deleteMany({_id:{$in:campground.reviews}});
     req.flash('success','Successfully deleted the campground');
     res.redirect('/campgrounds');
 })

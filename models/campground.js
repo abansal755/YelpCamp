@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
-const Review = require('./review');
 const escape = require('escape-html');
 const {cloudinary} = require('../config/multer');
+const Review = require('../models/review');
 
 const campgroundScheme = new mongoose.Schema({
     title: {
@@ -70,6 +70,7 @@ campgroundScheme.pre('save', function(next){
 
 campgroundScheme.post('deleteOne', {document: true, query: false},async function(){
     for(const file of this.image) await cloudinary.uploader.destroy(file.filename);
+    await Review.deleteMany({_id:{$in:this.reviews}});
 });
 
 module.exports = mongoose.model('Campground',campgroundScheme);
