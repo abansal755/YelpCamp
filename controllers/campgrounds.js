@@ -99,10 +99,8 @@ exports.update = wrapAsync(async (req,res) => {
 })
 
 exports.destroy = wrapAsync(async (req,res) => {
-    const {id} = req.params;
     const campground = await req.campgroundQuery.deleteOne();
     await Review.deleteMany({_id:{$in:campground.reviews}});
-    for(const file of campground.image) await cloudinary.uploader.destroy(file.filename);
     req.flash('success','Successfully deleted the campground');
     res.redirect('/campgrounds');
 })

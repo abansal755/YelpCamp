@@ -77,9 +77,6 @@ exports.destroy = wrapAsync(async (req,res) => {
 
         //deleting all the reviews of a specific campground
         await Review.deleteMany({_id:{$in:campground.reviews}});
-
-        //deleting all the images of the campground from the disk
-        for(const file of campground.image) await cloudinary.uploader.destroy(file.filename)
     };
 
     //deleting all the reviews by the user

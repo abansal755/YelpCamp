@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Review = require('./review');
 const escape = require('escape-html');
+const {cloudinary} = require('../config/multer');
 
 const campgroundScheme = new mongoose.Schema({
     title: {
@@ -67,6 +68,8 @@ campgroundScheme.pre('save', function(next){
     next();
 });
 
-//TODO: add middleware for deleting images from disk after deleting campground
+campgroundScheme.post('deleteOne', {document: true, query: false},async function(){
+    for(const file of this.image) await cloudinary.uploader.destroy(file.filename);
+});
 
 module.exports = mongoose.model('Campground',campgroundScheme);
