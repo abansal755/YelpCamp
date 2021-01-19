@@ -55,7 +55,7 @@ app.use(methodOverride('_method'));
 
 const store = new mongoStore({
     url: dbUrl,
-    secret: process.env.secret,
+    // secret: process.env.secret,
     touchAfter: 24*60*60
 });
 

@@ -1,4 +1,3 @@
-const fs = require('fs/promises');
 const Campground = require('../models/campground');
 const Review = require('../models/review');
 const AppError = require('../utils/AppError');

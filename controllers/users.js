@@ -1,4 +1,4 @@
-const fs = require('fs/promises');
+const {cloudinary} = require('../config/multer');
 const User = require('../models/user');
 const Campground = require('../models/campground');
 const Review = require('../models/review');
@@ -79,7 +79,7 @@ exports.destroy = wrapAsync(async (req,res) => {
         await Review.deleteMany({_id:{$in:campground.reviews}});
 
         //deleting all the images of the campground from the disk
-        for(const file of campground.image) await fs.unlink(`public/${file}`);
+        for(const file of campground.image) await cloudinary.uploader.destroy(file.filename)
     };
 
     //deleting all the reviews by the user
