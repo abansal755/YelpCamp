@@ -4,6 +4,7 @@ const {cloudinary} = require('../config/multer');
 const Review = require('../models/review');
 const wrapHook = require('../utils/wrapHook');
 const geocoder = require('../config/mapbox');
+const AppError = require('../utils/AppError');
 
 const campgroundScheme = new mongoose.Schema({
     title: {
