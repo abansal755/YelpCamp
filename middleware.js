@@ -2,6 +2,7 @@ const Campground = require('./models/campground');
 const Review = require('./models/review');
 const AppError = require('./utils/AppError');
 const wrapAsync = require('./utils/wrapAsync');
+const wrapAsyncFlash = require('./utils/wrapAsyncFlash');
 
 exports.ensureLogin = function(req,res,next){
     if(req.isAuthenticated()) next();
