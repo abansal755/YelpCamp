@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 const escape = require('escape-html');
 const {cloudinary} = require('../config/multer');
 const Review = require('../models/review');
+const wrapHook = require('../utils/wrapHook');
+const geocoder = require('../config/mapbox');
 
 const campgroundScheme = new mongoose.Schema({
     title: {
@@ -61,16 +63,25 @@ campgroundScheme.virtual('properties.popupHtml').get(function(){
             ${this.location}`;
 });
 
-campgroundScheme.pre('save', function(next){
+campgroundScheme.pre('validate', function(next){
     this.title = escape(this.title);
     this.description = escape(this.description);
     this.location = escape(this.location);
     next();
 });
 
-campgroundScheme.post('deleteOne', {document: true, query: false},async function(){
-    for(const file of this.image) await cloudinary.uploader.destroy(file.filename);
-    await Review.deleteMany({_id:{$in:this.reviews}});
-});
+campgroundScheme.pre('validate',wrapHook(async function(campground){
+    const geo = await geocoder.forwardGeocode({
+        query: campground.location,
+        limit: 1
+    }).send();
+    if(geo.body.features.length === 0) throw new AppError('Location not found. Please enter a valid location',400);
+    campground.geometry = geo.body.features[0].geometry;
+}))
+
+campgroundScheme.post('deleteOne', {document: true, query: false},wrapHook(async function(campground){
+    for(const file of campground.image) await cloudinary.uploader.destroy(file.filename);
+    await Review.deleteMany({_id:{$in:campground.reviews}});
+}));
 
 module.exports = mongoose.model('Campground',campgroundScheme);
