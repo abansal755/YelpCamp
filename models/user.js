@@ -9,12 +9,16 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
         // unique: true
-    }
+    },
+    campgrounds: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Campground'
+    }]
 });
 userSchema.plugin(passportLocalMongoose);
 //TODO: add email validation
 
-userSchema.post('deleteOne',{document: true, query: false},wrapHook(async function(user){
+userSchema.post('deleteOne',{document: true, query: false},wrapHook.post(async function(user){
     //deleting all campgrounds of the user
     const campgrounds = await Campground.find({author: user._id});
     for(const campground of campgrounds) await campground.deleteOne();

@@ -31,9 +31,11 @@ exports.create = wrapAsync(async (req,res) => {
     campground.author = req.user._id;
     if(req.files.length === 0) throw new AppError('Atleast 1 image is required',400);
     for(const file of req.files) campground.image.push({path:file.path, filename:file.filename});
+    req.user.campgrounds.push(campground);
 
     try{
         await campground.save();
+        await req.user.save();
         req.flash('success','Successfully created a campground');
         res.redirect(`/campgrounds/${campground._id}`);
     }catch(err){

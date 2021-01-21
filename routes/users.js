@@ -42,4 +42,6 @@ router.route('/settings/delete')
     .get(usersController.delete)
     .post(usersController.destroy);
 
+router.get('/my-campgrounds',middleware.ensureLogin,usersController.myCampgrounds);
+
 module.exports = router;

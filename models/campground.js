@@ -71,16 +71,16 @@ campgroundScheme.pre('validate', function(next){
     next();
 });
 
-campgroundScheme.pre('validate',wrapHook(async function(campground){
+campgroundScheme.pre('validate',wrapHook.pre(async function(campground){
     const geo = await geocoder.forwardGeocode({
         query: campground.location,
         limit: 1
     }).send();
     if(geo.body.features.length === 0) throw new AppError('Location not found. Please enter a valid location',400);
     campground.geometry = geo.body.features[0].geometry;
-}))
+}));
 
-campgroundScheme.post('deleteOne', {document: true, query: false},wrapHook(async function(campground){
+campgroundScheme.post('deleteOne', {document: true, query: false},wrapHook.post(async function(campground){
     for(const file of campground.image) await cloudinary.uploader.destroy(file.filename);
     await Review.deleteMany({_id:{$in:campground.reviews}});
 }));

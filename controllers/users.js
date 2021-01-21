@@ -60,3 +60,9 @@ exports.destroy = wrapAsync(async (req,res) => {
     await req.user.deleteOne();
     res.redirect('/');
 })
+
+exports.myCampgrounds = async (req,res) => {
+    req.user.populate('campgrounds',function(){
+        res.render('users/my-campgrounds');
+    })
+}
