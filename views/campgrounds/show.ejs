@@ -81,15 +81,22 @@
         <h2 class="mt-3 h4">Reviews <span class="badge bg-dark rounded-pill"><%=campground.reviews.length%></span></h2>
         <% for(let review of campground.reviews){ %>
             <div class="card mb-2">
-                <div class="card-body">
-                    <h2 class="h5"><%=review.author.username%></h2>
-                    <p class="starability-result" data-rating="<%=review.rating%>"></p>
-                    <p class="mb-0"><%=review.body%></p>
-                    <% if(user && review.author.equals(user)){ %>
-                        <form action="/campgrounds/<%=campground._id%>/reviews/<%=review._id%>?_method=DELETE" method="POST">
-                            <button class="btn btn-danger btn-sm mt-3">Delete</button>
-                        </form>
-                    <% } %>
+                <div class="card-body d-flex">
+                    <div class="row">
+                        <div class="col-4">
+                            <img src="<%= user.profilePhoto.path || '/images/noprofilepic.jpg' %>" class="img-fluid">
+                        </div>
+                        <div class="col-8">
+                            <h2 class="h5"><%=review.author.username%></h2>
+                            <p class="starability-result" data-rating="<%=review.rating%>"></p>
+                            <p class="mb-0"><%=review.body%></p>
+                            <% if(user && review.author.equals(user)){ %>
+                                <form action="/campgrounds/<%=campground._id%>/reviews/<%=review._id%>?_method=DELETE" method="POST">
+                                    <button class="btn btn-danger btn-sm mt-3">Delete</button>
+                                </form>
+                            <% } %>
+                        </div>
+                    </div>
                 </div>
             </div>
         <% } %>
