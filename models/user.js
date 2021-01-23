@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const passportLocalMongoose = require('passport-local-mongoose');
 const Campground = require('../models/campground');
 const Review = require('../models/review');
+const Image = require('../models/image');
 const wrapHook = require('../utils/wrapHook');
 const {cloudinary} = require('../config/multer');
 
@@ -15,11 +16,7 @@ const userSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Campground'
     }],
-    profilePhoto: {
-        _id: false,
-        path: String,
-        filename: String
-    }
+    profilePhoto: Image.optional
 });
 userSchema.plugin(passportLocalMongoose);
 //TODO: add email validation

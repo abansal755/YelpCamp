@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const escape = require('escape-html');
 const {cloudinary} = require('../config/multer');
 const Review = require('../models/review');
+const Image = require('../models/image');
 const wrapHook = require('../utils/wrapHook');
 const geocoder = require('../config/mapbox');
 const AppError = require('../utils/AppError');
@@ -35,17 +36,7 @@ const campgroundScheme = new mongoose.Schema({
         type: String,
         required: true
     },
-    image: [{
-        _id: false,
-        path: {
-            type: String,
-            required: true
-        },
-        filename: {
-            type: String,
-            required: true
-        }
-    }],
+    image: [Image.required],
     reviews: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Review'
