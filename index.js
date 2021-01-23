@@ -13,6 +13,9 @@ const passportLocal = require('passport-local');
 const helmet = require('helmet');
 
 const AppError = require('./utils/AppError');
+const minifyAssets = require('./utils/minifyAssets');
+minifyAssets('public');
+minifyAssets('views');
 
 const User = require('./models/user');
 
@@ -99,7 +102,7 @@ app.use((req,res,next) => {
 });
 
 app.get('/',(req,res) => {
-    res.render('home');
+    res.render('minified/home');
 });
 
 app.use('/',usersRouter);

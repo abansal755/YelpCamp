@@ -6,11 +6,11 @@ const {cloudinary} = require('../config/multer');
 
 exports.index = wrapAsync(async (req,res) => {
     const campgrounds = await Campground.find({}).exec();
-    res.render('campgrounds/index',{campgrounds});
+    res.render('minified/campgrounds/index',{campgrounds});
 })
 
 exports.new = (req,res) => {
-    res.render('campgrounds/new');
+    res.render('minified/campgrounds/new');
 }
 
 exports.show = wrapAsync(async (req,res) => {
@@ -21,7 +21,7 @@ exports.show = wrapAsync(async (req,res) => {
         }
     },function(){
         req.campgroundQuery.populate('author',function(){
-            res.render('campgrounds/show',{campground:req.campgroundQuery});
+            res.render('minified/campgrounds/show',{campground:req.campgroundQuery});
         });
     });
 })
@@ -46,11 +46,11 @@ exports.create = wrapAsync(async (req,res) => {
 })
 
 exports.edit = (req,res) => {
-    res.render('campgrounds/edit',{campground:req.campgroundQuery});
+    res.render('minified/campgrounds/edit',{campground:req.campgroundQuery});
 }
 
 exports.delete = (req,res) => {
-    res.render('campgrounds/delete',{campground:req.campgroundQuery});
+    res.render('minified/campgrounds/delete',{campground:req.campgroundQuery});
 }
 
 exports.update = wrapAsync(async (req,res) => {

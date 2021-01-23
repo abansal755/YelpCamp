@@ -6,7 +6,7 @@ const wrapAsync = require('../utils/wrapAsync');
 const wrapAsyncFlash = require('../utils/wrapAsyncFlash');
 
 exports.registerShow = (req,res) => {
-    res.render('users/register');
+    res.render('minified/users/register');
 }
 
 exports.register = wrapAsyncFlash(async (req,res) => {
@@ -21,7 +21,7 @@ exports.register = wrapAsyncFlash(async (req,res) => {
 },'/register')
 
 exports.loginShow = (req,res) => {
-    res.render('users/login');
+    res.render('minified/users/login');
 }
 
 exports.login = (req,res) => {
@@ -38,11 +38,11 @@ exports.logout = (req,res) => {
 }
 
 exports.settings = (req,res) => {
-    res.render('users/settings');
+    res.render('minified/users/settings');
 }
 
 exports.changePasswordShow = (req,res) => {
-    res.render('users/change-password');
+    res.render('minified/users/change-password');
 }
 
 exports.changePassword = wrapAsyncFlash(async (req,res) => {
@@ -53,7 +53,7 @@ exports.changePassword = wrapAsyncFlash(async (req,res) => {
 },'/settings/change-password','Incorrect current password')
 
 exports.delete = (req,res) => {
-    res.render('users/delete');
+    res.render('minified/users/delete');
 }
 
 exports.destroy = wrapAsync(async (req,res) => {
@@ -63,6 +63,6 @@ exports.destroy = wrapAsync(async (req,res) => {
 
 exports.myCampgrounds = async (req,res) => {
     req.user.populate('campgrounds',function(){
-        res.render('users/my-campgrounds');
+        res.render('minified/users/my-campgrounds');
     })
 }

@@ -1,3 +1,5 @@
 node_modules
 public/images/uploads
 .env
+views/minified
+public/minified
