@@ -5,6 +5,8 @@ const middleware = require('../middleware');
 
 const usersController = require('../controllers/users');
 
+const {upload} = require('../config/multer');
+
 /*
 registerShow GET /register => shows register page
 register POST /register => registers user on server
@@ -43,5 +45,9 @@ router.route('/settings/delete')
     .post(usersController.destroy);
 
 router.get('/my-campgrounds',middleware.ensureLogin,usersController.myCampgrounds);
+
+router.post('/change-profile-photo',middleware.ensureLogin,upload.single('profile-photo'),usersController.changeProfilePhoto);
+
+router.post('/remove-profile-photo',middleware.ensureLogin,usersController.removeProfilePhoto);
 
 module.exports = router;

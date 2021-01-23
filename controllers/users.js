@@ -66,3 +66,24 @@ exports.myCampgrounds = async (req,res) => {
         res.render('minified/users/my-campgrounds');
     })
 }
+
+exports.changeProfilePhoto = wrapAsyncFlash(async (req,res) => {
+    if(req.user.profilePhoto.filename) await cloudinary.uploader.destroy(req.user.profilePhoto.filename);
+    req.user.profilePhoto = {
+        path: req.file.path,
+        filename: req.file.filename
+    };
+    await req.user.save();
+    req.flash('success','Successfully changed the profile photo');
+    res.redirect('/settings');
+},'/settings')
+
+exports.removeProfilePhoto = wrapAsyncFlash(async (req,res) => {
+    if(req.user.profilePhoto.filename){
+        await cloudinary.uploader.destroy(req.user.profilePhoto.filename);
+        req.user.profilePhoto = {};
+        await req.user.save();
+    }
+    req.flash('success','Successfully removed the profile photo');
+    res.redirect('/settings');
+},'/settings')

@@ -10,8 +10,8 @@ async function minifyAssetsWrite(location,dir){
         await fs.mkdir(folder,{recursive:true});
         let data;
         if(path.extname(filePath) === '.ejs') data = collapse(await fs.readFile(location,'utf-8'));
-        else data = await minify(location);
-        await fs.writeFile(filePath,data);
+        else if(path.extname(filePath) === '.css' || path.extname(filePath) === '.js') data = await minify(location);
+        if(data) await fs.writeFile(filePath,data);
     }
     catch(err){
         throw err;

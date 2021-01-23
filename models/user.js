@@ -3,6 +3,7 @@ const passportLocalMongoose = require('passport-local-mongoose');
 const Campground = require('../models/campground');
 const Review = require('../models/review');
 const wrapHook = require('../utils/wrapHook');
+const {cloudinary} = require('../config/multer');
 
 const userSchema = new mongoose.Schema({
     email: {
@@ -13,7 +14,12 @@ const userSchema = new mongoose.Schema({
     campgrounds: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Campground'
-    }]
+    }],
+    profilePhoto: {
+        _id: false,
+        path: String,
+        filename: String
+    }
 });
 userSchema.plugin(passportLocalMongoose);
 //TODO: add email validation
@@ -29,6 +35,9 @@ userSchema.post('deleteOne',{document: true, query: false},wrapHook.post(async f
         await review.deleteOne();
         await review.campground.update({$pull:{reviews: review._id}});
     }
+
+    //deleting profile photo of the user
+    if(user.profilePhoto.filename) await cloudinary.uploader.destroy(user.profilePhoto.filename);
 }));
 
 module.exports = mongoose.model('User',userSchema);
