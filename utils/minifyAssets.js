@@ -34,8 +34,11 @@ async function minifyAssets(location,dir){
 
 module.exports = async function(dir){
     try{
-        if((await fs.readdir(dir)).includes('minified')) await fs.rmdir(path.join(dir,'minified'),{recursive:true});
-        await minifyAssets(dir,dir);
+        try{
+            await fs.access(path.join(dir,'minified'));
+            await fs.rmdir(path.join(dir,'minified'),{recursive:true})
+        }catch{}
+        await minifyAssets(dir,dir)
     }catch(err){
         console.log(err);
     }
