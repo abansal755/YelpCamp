@@ -39,9 +39,6 @@
                     <li class="list-group-item text-muted">
                         <%=campground.location%>
                     </li>
-                    <li class="list-group-item text-muted">
-                        Submitted by <%=campground.author.username%>
-                    </li>
                     <% if(campground.author.equals(user)){ %>
                         <li class="list-group-item">
                             <a href="/campgrounds/<%= campground._id %>/edit" class="btn btn-warning">Edit</a>
@@ -49,6 +46,20 @@
                         </li>
                     <% } %>
                 </ul>
+        </div>
+        <h2 class="h4 mt-3">About Author</h2>
+        <div class="card">
+            <div class="row g-0">
+                <div class="col-4">
+                    <img src="<%=campground.author.profilePhoto.path || '/images/noprofilepic.jpg'%>" class="img-fluid card-img">
+                </div>
+                <div class="col-8">
+                    <div class="card-body">
+                        <h3 class="h5"><%=campground.author.username%></h3>
+                        <p><%=campground.author.email%></p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <div class="col-md-6">
@@ -81,13 +92,13 @@
         <h2 class="mt-3 h4">Reviews <span class="badge bg-dark rounded-pill"><%=campground.reviews.length%></span></h2>
         <% for(let review of campground.reviews){ %>
             <div class="card mb-2">
-                <div class="card-body d-flex">
-                    <div class="row">
-                        <div class="col-4">
-                            <img src="<%= review.author.profilePhoto.path || '/images/noprofilepic.jpg' %>" class="img-fluid rounded">
-                        </div>
-                        <div class="col-8">
-                            <h2 class="h5"><%=review.author.username%></h2>
+                <div class="row g-0">
+                    <div class="col-4">
+                        <img src="<%= review.author.profilePhoto.path || '/images/noprofilepic.jpg' %>" class="img-fluid card-img">
+                    </div>
+                    <div class="col-8">
+                        <div class="card-body">
+                            <h3 class="h5"><%=review.author.username%></h3>
                             <p class="starability-result" data-rating="<%=review.rating%>"></p>
                             <p class="mb-0"><%=review.body%></p>
                             <% if(user && review.author.equals(user)){ %>
